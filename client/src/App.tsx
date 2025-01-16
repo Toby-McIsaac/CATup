@@ -13,13 +13,16 @@ function App() {
     <>
       <BrowserRouter>
         <AuthProvider>
+          <header>
           <nav>
-            <Link to="/">Home</Link> |{" "}
-            <Link to="/newParty">New Party</Link> |{" "}
-            <Link to="/login">Login</Link> |{" "}
-            <Link to="/im-bringing">I'm Bringing</Link> |{" "}
+            <Link to="/">Home</Link>
+            <Link to="/login">Login</Link>
+            <Link to="/newParty">New Party</Link>
+            <Link to="/im-bringing">I'm Bringing</Link>
             <Link to="/delete-later">Delete Later</Link>
           </nav>
+          </header>
+          <main>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route
@@ -48,6 +51,7 @@ function App() {
              />
             <Route path="/" element={<Home />} />
           </Routes>
+          </main>
         </AuthProvider>
       </BrowserRouter>
     </>
