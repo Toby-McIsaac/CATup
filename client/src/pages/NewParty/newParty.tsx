@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import TagSelection from './tagSelect';
 
 const CreateParty: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -63,17 +63,7 @@ const CreateParty: React.FC = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="tags">Tags:</label>
-                    <input
-                        type="text"
-                        id="tags"
-                        name="tags"
-                        value={formData.tags}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <TagSelection />
                 <button type="submit">Create Party</button>
             </form>
         </div>

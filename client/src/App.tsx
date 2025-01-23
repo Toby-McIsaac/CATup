@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import DeleteLater from "./pages/DeleteLater";
 import AuthWrapper from "./components/authentication/AuthWrapper";
 import ImBringing from "./pages/ImBringing/ImBringing";
-import CreateParty from './pages/newParty';
+import CreateParty from './pages/NewParty/newParty';
 import Home from './pages/home';
 
 function App() {
