@@ -1,5 +1,5 @@
 import React from "react";
-import ToggleButton from "../../common/ToggleButton";
+import ToggleButton from "../../components/authentication/common/ToggleButton";
 
 const ImBringing: React.FC = () => {
   return (

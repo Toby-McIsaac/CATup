@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import records from "../routes/record";
+import authentication from "../routes/authRoutes";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -13,6 +14,7 @@ app.use("/login", (req, res) => {
   });
 });
 app.use("/record", records);
+app.use(authentication);
 
 // start the Express server
 app.listen(PORT, () => {
