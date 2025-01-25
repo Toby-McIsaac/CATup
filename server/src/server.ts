@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import records from "../routes/record";
-import authentication from "../routes/authRouter";
+import authRouter from "../routes/authRouter";
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -14,7 +14,7 @@ app.use("/login", (req, res) => {
   });
 });
 app.use("/record", records);
-app.use(authentication);
+app.use("/auth", authRouter);
 
 // start the Express server
 app.listen(PORT, () => {
