@@ -5,16 +5,11 @@ const Home = () => {
   return (
     <>
     <div>
+      <h1>Catup</h1>
+      <h2>Party Code:</h2>
       <form>
-        <label>
-          Name:
-          <input type="text" name="name" />
-        </label><br />
-        <label>
-          Email:
-          <input type="text" name="email" />
-        </label><br />
-        <input type="submit" value="Submit" />
+          <input type="text" name="partycode" />
+        <input type="submit" value="Join" />
       </form>
     </div>
     </>
