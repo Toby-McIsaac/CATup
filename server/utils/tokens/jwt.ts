@@ -27,13 +27,24 @@ export const generateRefreshToken = async (userId: string) => {
   return refreshToken;
 };
 
-export const verifyToken = async (token: string, secret: string) => {
+export const verifyToken = async (
+  token: string,
+  secret: string
+): Promise<VerifiedToken> => {
   try {
     const { payload } = await jwtVerify(
       token,
       new TextEncoder().encode(secret)
-    ) as { payload: VerifiedToken };
-    return payload; // Contains userId and tokenId
+    );
+
+    if (
+      typeof payload.userId !== "string" ||
+      typeof payload.tokenId !== "string"
+    ) {
+      throw new Error("Malformed token payload");
+    }
+
+    return payload as VerifiedToken; // Safe assertion
   } catch (err) {
     throw new Error("Invalid or expired token");
   }

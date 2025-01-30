@@ -1,4 +1,4 @@
-import RefreshToken from "../../models/refreshToken.js";
+import RefreshToken from "../../models/refreshToken";
 
 export const saveRefreshTokenInDB = async (userId: string, tokenId: string) => {
   try {

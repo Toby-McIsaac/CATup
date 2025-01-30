@@ -11,10 +11,11 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/tokens/jwt";
+import { decodeJwt } from "jose";
 
 const authRouter = express.Router();
 
-authRouter.post("/register", async (req: Request, res: Response) => {
+authRouter.post("/auth/register", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -37,7 +38,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-authRouter.post("/api/login", async (req: Request, res: Response) => {
+authRouter.post("/auth/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -64,7 +65,7 @@ authRouter.post("/api/login", async (req: Request, res: Response) => {
 });
 
 authRouter.post(
-  "/api/refresh-token",
+  "/auth/refresh-token",
   async (req: Request, res: Response): Promise<void> => {
     const refreshToken = req.cookies?.refreshToken; // Ensure optional chaining for `cookies`
     if (!refreshToken) {
@@ -90,7 +91,7 @@ authRouter.post(
       const newRefreshToken = await generateRefreshToken(userId);
 
       // Rotate the refresh token in the database
-      const newTokenId = JSON.parse(newRefreshToken).tokenId;
+      const newTokenId = decodeJwt(newRefreshToken).tokenId as string;
       await rotateRefreshToken(userId, tokenId, newTokenId);
 
       // Set the new refresh token as a cookie
@@ -111,7 +112,7 @@ authRouter.post(
 );
 
 authRouter.post(
-  "/api/logout",
+  "/auth/logout",
   async (req: Request, res: Response): Promise<void> => {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
