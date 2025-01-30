@@ -20,6 +20,7 @@ export const checkTokenInDB = async (
 export const revokeTokenInDB = async (tokenId: string) => {
     try {
         await RefreshToken.findOneAndDelete({ tokenId });
+        return true;
     } catch (err) {
         console.error('Error revoking token:', err);
         throw new Error('Could not revoke token');

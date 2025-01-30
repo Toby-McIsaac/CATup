@@ -54,9 +54,10 @@ authRouter.post("/auth/login", async (req: Request, res: Response) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production", // Enable secure flag only in production
       sameSite: "strict",
     });
+    
     res.json({ accessToken });
   } catch (err: any) {
     console.error(err);
@@ -95,11 +96,12 @@ authRouter.post(
       await rotateRefreshToken(userId, tokenId, newTokenId);
 
       // Set the new refresh token as a cookie
-      res.cookie("refreshToken", newRefreshToken, {
+      res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production", // Enable secure flag only in production
         sameSite: "strict",
       });
+      
 
       res.status(200).json({ accessToken });
     } catch (err: any) {
@@ -125,16 +127,19 @@ authRouter.post(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET!
       );
+      const success = await revokeTokenInDB(tokenId);
 
-      // Revoke the token in the database
-      await revokeTokenInDB(tokenId);
+      if (!success) {
+        res.status(500).json({ message: "Failed to revoke refresh token" });
+        return;
+      }
     } catch (err: any) {
-      console.error(err); // Log errors for debugging but don't expose sensitive details
+      console.error(err);
+      res
+        .status(500)
+        .json({ message: "Error during logout", error: err.message });
+      return;
     }
-
-    // Clear the refresh token cookie
-    res.clearCookie("refreshToken");
-    res.status(204).json({ message: "Logged out successfully" });
   }
 );
 
