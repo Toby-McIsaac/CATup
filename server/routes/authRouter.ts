@@ -5,12 +5,12 @@ import {
   checkTokenInDB,
   rotateRefreshToken,
   revokeTokenInDB,
-} from "../utils/token";
+} from "../utils/tokens/token";
 import {
   verifyToken,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/jwt";
+} from "../utils/tokens/jwt";
 
 const authRouter = express.Router();
 
