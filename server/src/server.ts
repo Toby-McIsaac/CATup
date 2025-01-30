@@ -19,4 +19,5 @@ app.use("/auth", authRouter);
 // start the Express server
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+  console.log("Running in:", process.env.NODE_ENV || "development");
 });
