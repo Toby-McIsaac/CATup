@@ -5,9 +5,8 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import DeleteLater from "./pages/DeleteLater";
 import AuthWrapper from "./components/authentication/AuthWrapper";
 import ImBringing from "./pages/ImBringing/ImBringing";
-import CreateParty from './pages/NewParty';
 import Home from './pages/home';
-import SignUp from './pages/signUp';
+import SignUp from './pages/SignUp.tsx';
 
 function App() {
   return (
@@ -40,14 +39,6 @@ function App() {
                 </AuthWrapper>
               }
             />
-            <Route 
-              path="/newParty" 
-              element={
-                <AuthWrapper>
-                  <CreateParty />
-                </AuthWrapper>
-               } 
-             />
              <Route 
               path="/sign-up" 
               element={
