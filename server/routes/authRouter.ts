@@ -1,17 +1,12 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import User from "../models/user";
-import {
-  checkTokenInDB,
-  rotateRefreshToken,
-  revokeTokenInDB,
-} from "../utils/tokens/token";
+import { checkTokenInDB, revokeTokenInDB } from "../utils/tokens/token";
 import {
   verifyToken,
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/tokens/jwt";
-import { decodeJwt } from "jose";
 
 const authRouter = express.Router();
 
@@ -21,7 +16,7 @@ authRouter.post("/auth/register", async (req: Request, res: Response) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      res.status(400).json({ message: "User already exists" });
+      res.status(400).json({ message: "Username or password already exists" });
       return;
     }
 
@@ -57,7 +52,7 @@ authRouter.post("/auth/login", async (req: Request, res: Response) => {
       secure: process.env.NODE_ENV === "production", // Enable secure flag only in production
       sameSite: "strict",
     });
-    
+
     res.json({ accessToken });
   } catch (err: any) {
     console.error(err);
@@ -66,7 +61,7 @@ authRouter.post("/auth/login", async (req: Request, res: Response) => {
 });
 
 authRouter.post(
-  "/auth/refresh-token",
+  "/auth/access-token",
   async (req: Request, res: Response): Promise<void> => {
     const refreshToken = req.cookies?.refreshToken; // Ensure optional chaining for `cookies`
     if (!refreshToken) {
@@ -83,31 +78,18 @@ authRouter.post(
       // Validate the token in the database
       const isValid = await checkTokenInDB(userId, tokenId);
       if (!isValid) {
-        res.status(403).json({ message: "Invalid token" });
+        res.status(401).json({ message: "Invalid or expired refresh token" });
         return;
       }
 
-      // Generate new tokens
+      // Generate new token
       const accessToken = await generateAccessToken(userId);
-      const newRefreshToken = await generateRefreshToken(userId);
-
-      // Rotate the refresh token in the database
-      const newTokenId = decodeJwt(newRefreshToken).tokenId as string;
-      await rotateRefreshToken(userId, tokenId, newTokenId);
-
-      // Set the new refresh token as a cookie
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Enable secure flag only in production
-        sameSite: "strict",
-      });
-      
 
       res.status(200).json({ accessToken });
     } catch (err: any) {
       console.error(err);
       res
-        .status(403)
+        .status(401)
         .json({ message: "Failed to refresh token", error: err.message });
     }
   }
@@ -133,6 +115,13 @@ authRouter.post(
         res.status(500).json({ message: "Failed to revoke refresh token" });
         return;
       }
+
+      // Clear the refresh token cookie on logout
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
     } catch (err: any) {
       console.error(err);
       res

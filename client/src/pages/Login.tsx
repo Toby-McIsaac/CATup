@@ -15,6 +15,7 @@ const Login: React.FC = () => {
 
   return (
     <div>
+      <h2>Login</h2>
       <input
         type="text"
         value={email}

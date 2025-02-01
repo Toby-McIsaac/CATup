@@ -18,7 +18,7 @@ export const generateRefreshToken = async (userId: string) => {
   const tokenId = uuidv4(); // Unique token identifier
   const refreshToken = await new SignJWT({ userId, tokenId })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
+    //.setExpirationTime("7d") // Implement support later on
     .sign(new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET));
 
   // Save tokenId to the database for revocation handling
