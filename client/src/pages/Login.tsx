@@ -9,13 +9,14 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    console.log("Logging in...");
     await validateToken();
     navigate("/delete-later");
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Login</h2> 
       <input
         type="text"
         value={email}

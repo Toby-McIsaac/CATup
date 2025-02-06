@@ -1,4 +1,10 @@
-import React, { createContext, useState, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
 
 export interface User {
   id: string;
@@ -29,21 +35,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return localStorage.getItem("token");
   };
 
-  const validateToken = () => {
-    // Directly set a dummy user if the token exists
-    return login({
-      id: "test-id",
-      name: "test-name",
-      email: "test-email",
-    });
-  };
+  const validateToken = useCallback(async () => {
+    const token = checkLoggedIn(); // Check token presence
+
+    if (token && !user) {
+      // Only call login if there's a token and no user is logged in
+      await login({
+        id: "test-id",
+        name: "test-name",
+        email: "test-email",
+      });
+    }
+  }, [user]); // Depend on `user` so we don't trigger `login` repeatedly if the user is already logged in.
 
   useEffect(() => {
-    const token = checkLoggedIn();
-    if (token) {
-      validateToken();
-    }
-  });
+    const validate = async () => {
+      const token = checkLoggedIn();
+      if (token) {
+        await validateToken(); // Validates the token only if a token is present
+      }
+    };
+
+    validate();
+  }, [validateToken]);
 
   const login = async (userInfo: User) => {
     try {
@@ -60,10 +74,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-
       setUser(data);
-      // TODO: Better way to store token?
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.token); // Store token
     } catch (error) {
       console.error("Error during login:", error);
     }
@@ -71,7 +83,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("token");
+    localStorage.removeItem("token"); // Remove token on logout
   };
 
   return (
